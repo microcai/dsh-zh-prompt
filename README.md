@@ -1,5 +1,7 @@
 # dsh-zh-prompt
 
+> 中文 | [English](./README.en.md)
+
 把 DSH 的**系统提示词 section、工具 schema 描述、runtime context 快照、time-context 消息、skill 目录消息与 compaction 摘要指令**改写为中文的可开关插件。
 
 ## 为什么改成中文
