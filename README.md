@@ -2,6 +2,20 @@
 
 把 DSH 的**系统提示词 section、工具 schema 描述、runtime context 快照、time-context 消息、skill 目录消息与 compaction 摘要指令**改写为中文的可开关插件。
 
+## 为什么改成中文
+
+模型思维链用什么语言，主要**看输入**：上下文里哪种语言占主导，思考就被带向哪种语言。用户哪怕全程中文对话，agent 读到的系统提示词、工具描述、runtime context 依然全是英文——一小片中文漂泊在英文的汪洋大海里，思维链自然会滑回英文。至于回复语言会强行跟随用户，那是另做对齐强化训练的结果：它只管输出，管不到思维链。所以想让思维链稳定用中文，就得把喂给模型的提示词本身换成中文——光靠中文对话或一句「请用中文思考」，抵不过满屏英文的带偏。
+
+一定要有中文思维链，三个原因：
+
+1. **看得懂**：中国用户直接阅读思维链，无需额外翻译。
+2. **想得顺**：满屏英文不断把思考往英文拽，模型被迫在两种语言之间反复切换；混合语言思维互相拉扯，思考质量下降。
+3. **省字数**：同样的内容用中文书写通常编码为更少的 token（中文词表占比高的模型尤甚），思维链越长，省得越多。
+
+## 插件的工作机制
+
+因此本插件不是简单加一句中文指令，而是把提示词的**全部英文来源**——sections、工具 schema、runtime context、time-context、skill 目录、compaction 指令——整体换成中文，让模型看到的输入本身就以中文为主。下面各条目即逐条实现。
+
 - **sections / 工具 schema**：挂在 `system-prompt/assemble` waterfall 上，对已组装的 assembly 逐条做「英文原文 → 中文」精确替换；动态文本用正则规则（goal guidance、workflow/subagent 委派提示、team policy、MCP 资源服务器）。
 - **runtime context 快照**：`refreshContext()` 每步重跑 provider，waterfall 里改 contexts 会被覆盖，因此直接包装已注册 context entry 的 `text` 函数（provider 输出经翻译），`system-prompt/change` 时对新注册项补齐（WeakSet 保证幂等）。覆盖 working directory、file policy、approval policy、checkout/GUI URL、subagent 深度、team identity。快照框架头一行由 `joinContextSections` 硬编码，保留英文。
 - **time-context**：它是 `agent/pre-step` 注入的 user message。本插件的 listener 以 `prepend: true` 注册（cordis 用 unshift 置链首）且挂载晚于 base 的 time-context → 位于其外层，`await next()` 拿到已追加时间消息的最终 decision，翻译后返回，durable log 与 payload 一并中文。
