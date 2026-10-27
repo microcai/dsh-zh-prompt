@@ -14,7 +14,26 @@
 
 ## 安装（发给别人）
 
-把 `local-dsh-zh-prompt-<version>.tgz`（`npm pack` 产物）发给对方即可，对方不需要源码目录，本包无任何依赖。对方在自己的 DSH 里对 agent 说："安装 `file:/绝对路径/local-dsh-zh-prompt-0.6.0.tgz`"，让 ta 用插件管理器 `install_bundle`（target 传该 `file:` spec）。装好后在插件管理器 enable/disable `zh-prompt` 行切换中英文，即时生效。注意：插件靠逐字匹配上游英文文本，对方 DSH 版本不同时未命中部分静默回退英文，不会损坏提示词。
+两种方式任选其一，本包无任何依赖。装好后在插件管理器 enable/disable `zh-prompt` 行切换中英文，即时生效。注意：插件靠逐字匹配上游英文文本，对方 DSH 版本不同时未命中部分静默回退英文，不会损坏提示词。
+
+### 方式一：GitHub 仓库地址
+
+在 DSH 插件界面的「添加插件」输入框里直接填本仓库地址：
+
+```
+https://github.com/microcai/dsh-zh-prompt#v0.6.0
+```
+
+`#v0.6.0` 把安装锁定到该 tag；去掉 `#...` 时装的是默认分支最新提交。DSH 会先匿名检查仓库连通性，再克隆安装，不需要发布到 npm。前提与注意：
+
+- 仓库必须公开——安装前的连通性检查不带凭据，私有仓库会报「无法访问 GitHub」。
+- 对方网络要能访问 GitHub。中国大陆直连常常超时，此时让 ta 配好 git 代理再装，或改用方式二发 tgz。对话框里的「安装源」镜像只影响 npm 包名查询，对 GitHub 地址不起作用。
+- 对方若已装过 `@local/dsh-zh-prompt`（例如旧版 tgz），先卸载再安装。
+- 升级：先卸载再重装；发新版时记得打新 tag 并 push。
+
+### 方式二：tgz 文件
+
+把 `local-dsh-zh-prompt-<version>.tgz`（`npm pack` 产物）发给对方即可，对方不需要源码目录，也不需要访问 GitHub。对方在自己的 DSH 里对 agent 说："安装 `file:/绝对路径/local-dsh-zh-prompt-0.6.0.tgz`"，让 ta 用插件管理器 `install_bundle`（target 传该 `file:` spec）。适合对方网络不通或不想公开仓库的场景。
 
 ## 开发（本机）
 
