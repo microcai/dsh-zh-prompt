@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Chinese System Prompt",
+    "description": "Rewrites the assembled system prompt sections and tool schema descriptions into Chinese, falling back to English for unmatched text. Disable to return to the standard prompt."
+  }
+}

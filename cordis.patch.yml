@@ -1,0 +1,4 @@
+- insert:
+    - id: zh-prompt
+      name: '@local/dsh-zh-prompt'
+      config: {}
