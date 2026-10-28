@@ -20,6 +20,10 @@
  * - compaction：摘要生成是 purpose === "compaction" 的独立 `llm/stream` 调用，
  *   listener 里原地替换 messages 末元素（英文指令 → 中文指令），使 checkpoint
  *   正文从下一次压缩起就是中文。详见 zh-compaction.js。
+ * - tool-errors：工具执行失败的 `isError` content 文本（`Error: ...`）挂在
+ *   `tools/execute` waterfall（global）上按模板翻译——这是唯一能改写失败结果的
+ *   位置（`tools/post-execute` 禁止替换失败结果）。`error` 对象与 `isError` 结构
+ *   不动，机器路由依赖的 code 不受影响；未命中的错误保留英文。详见 zh-toolerrors.js。
  * 未命中翻译表的文本一律保留英文；禁用本插件即回到标准模式。
  */
 import { translateSection } from "./zh-sections.js";
@@ -27,6 +31,7 @@ import { translateTool } from "./zh-tools.js";
 import { translateContextText } from "./zh-contexts.js";
 import { translateCompactionRequest } from "./zh-compaction.js";
 import { translateSkillCatalogMessage } from "./zh-skillcatalog.js";
+import { translateToolErrorResult } from "./zh-toolerrors.js";
 
 export const inject = ["systemPrompt"];
 
@@ -147,6 +152,11 @@ export function apply(ctx) {
 		});
 		return changed ? { ...decision, messages } : decision;
 	}, { prepend: true, zhHoist: true });
+	// 工具失败提示：tools/execute waterfall 是唯一能改写失败结果的环节。
+	// 必须 global：工具执行按 agent scope dispatch，subagent 也要覆盖。
+	ctx.on("tools/execute", async (_exec, next) => {
+		return translateToolErrorResult(await next());
+	}, { global: true });
 	// compaction 摘要请求：原地把末元素（英文指令）换成中文指令。
 	// 必须 global：摘要调用由 compaction backend 发起，不落在本插件 scope。
 	ctx.on("llm/stream", (options, next) => {
