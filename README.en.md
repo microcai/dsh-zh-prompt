@@ -14,6 +14,11 @@ Why insist on a Chinese chain of thought? Three reasons:
 2. **Coherent**: A wall of English keeps dragging the thinking toward English, forcing the model to switch back and forth between languages; mixed-language reasoning pulls in opposing directions and degrades thinking quality.
 3. **Cheaper**: The same content written in Chinese usually encodes into fewer tokens (especially for models with a high Chinese share in the vocabulary); the longer the chain of thought, the more it saves.
 
+## screenshot
+
+![xiaoguo](asserts/example.png)
+
+
 ## How the plugin works
 
 For this reason the plugin does not merely append a Chinese instruction — it rewrites **every English source** in the prompt: sections, tool schemas, runtime context, time-context, the skill catalog, and compaction instructions — so that the input the model sees is predominantly Chinese to begin with. Each bullet below is one implemented piece.
