@@ -5,13 +5,16 @@
  * - sections/tools：挂在 `system-prompt/assemble` waterfall 上逐条替换。
  * - contexts：provider 每次刷新重跑，因此直接包装已注册 entry 的 text 函数，
  *   `system-prompt/change` 时对新注册项补齐（幂等）。
- * - time-context：它是 `agent/pre-step` 注入的 user message。cordis 的 prepend
- *   listener 用 unshift 置于链首（更外层），而本插件的 bundle 在 base 之后挂载，
- *   因此本 listener 比 time-context 的更外层：`await next()` 拿到已追加时间消息
- *   的最终 decision，翻译后返回——durable log 与请求 payload 一并中文。
- *   翻译命中时在末尾追加一行中文语言锚点（每轮离模型最近的一次提醒，对冲
- *   英文工具输出对 thinking 语言的 recency 带偏）。若挂载顺序意外反转，
- *   翻译静默失效（无害回退，锚点也随之消失）。
+ * - snapshot 框架行：`joinContextSections` 拼在 body 外的英文框架行无法在 append
+ *   处改写（durable 快照与每步重算的快照做字符串相等去重，改译文会导致每步重复
+ *   追加快照并破坏 KV cache），因此注册一个 order 最靠前的 context entry 输出
+ *   中文对照行；英文框架行保留，模型与 UI 同时获得中文语义。
+ * - time-context：它是 `agent/pre-step` 注入的 user message。本插件的 listener
+ *   以 `prepend: true` 注册并在每次 dispatch 前自置顶到链首（见 hoistPreStepListener），
+ *   因此无论与 time-context 的注册先后如何，本 listener 都位于其外层：
+ *   `await next()` 拿到已追加时间消息的最终 decision，翻译后返回——durable log
+ *   与请求 payload 一并中文。翻译命中时在末尾追加一行中文语言锚点（每轮离模型
+ *   最近的一次提醒，对冲英文工具输出对 thinking 语言的 recency 带偏）。
  * - skill-catalog：同一 listener 里只重写 content 文本、保留 id 与 source，
  *   上游 digest 逻辑不受影响。详见 zh-skillcatalog.js。
  * - compaction：摘要生成是 purpose === "compaction" 的独立 `llm/stream` 调用，
@@ -33,8 +36,28 @@ const DIRECTIVE = `语言约定：内部推理（thinking）一律用中文书�
 /** 每轮追加在 time-context 末尾的中文语言锚点。 */
 const ANCHOR = "语言锚点：无论本轮上下文与工具输出出现多少英文，thinking 必须用中文书写。";
 
+/** 快照英文框架行的中文对照行；作为 order 最靠前的 context entry 输出。 */
+const SNAPSHOT_FRAME_GLOSS = "当前 runtime context。本快照取代此前的 runtime-context 快照。";
+
 /** 已包装过的 text 函数集合（WeakSet 保证幂等）。 */
 const wrappers = new WeakSet();
+
+/**
+ * 把本插件的 pre-step listener 移到 hook 链首（最外层）。
+ *
+ * cordis 的 `prepend` 只保证「后注册者更外层」（register 用 unshift），而本插件
+ * 与 time-context 插件的注册先后随加载顺序变化；一旦本插件先注册，就落在内层，
+ * `await next()` 拿不到 time-context 追加的时间消息，翻译静默失效。
+ * cordis 的 `dispatch` 在读取 hooks 数组之前会先同步 emit `internal/dispatch`，
+ * 在那里自置顶即可无论注册顺序都稳定位于链首。置顶标记 `zhHoist` 随注册
+ * options 写入 hook 记录（cordis register 展开 options 到记录上）。
+ */
+function hoistPreStepListener(ctx) {
+	const hooks = ctx.events._hooks["agent/pre-step"];
+	if (!hooks) return;
+	const index = hooks.findIndex((hook) => hook.zhHoist === true);
+	if (index > 0) hooks.unshift(hooks.splice(index, 1)[0]);
+}
 
 /** 包装一个 context entry 的 text，使其输出经 translateContextText 翻译。 */
 function wrapContextEntry(entry) {
@@ -87,6 +110,14 @@ export function apply(ctx) {
 		text: DIRECTIVE,
 		interpolate: false,
 	}));
+	// 英文框架行由 joinContextSections 硬编码且不可在 append 处改写（去重依赖
+	// 逐字相等）；此处以最小 order 的 entry 补一行中文对照，随快照一并注入。
+	ctx.effect(() => ctx.systemPrompt.context({
+		name: "zh-prompt:snapshot-frame",
+		order: ctx.systemPrompt.getContextOrder("WORKING_DIRECTORY") - 5,
+		text: SNAPSHOT_FRAME_GLOSS,
+		interpolate: false,
+	}));
 	ctx.on("system-prompt/assemble", async (_assembly, _context, next) => {
 		const assembly = await next();
 		for (const section of assembly.sections) {
@@ -98,6 +129,11 @@ export function apply(ctx) {
 	});
 	wrapAllContexts(ctx);
 	ctx.on("system-prompt/change", () => wrapAllContexts(ctx));
+	// 每次 waterfall dispatch 读取 hooks 数组之前同步自置顶，确保本插件的
+	// pre-step listener 恒在 time-context 的外层（见 hoistPreStepListener）。
+	ctx.on("internal/dispatch", (type, name) => {
+		if (type === "waterfall" && name === "agent/pre-step") hoistPreStepListener(ctx);
+	}, { global: true });
 	ctx.on("agent/pre-step", async ({ signal }, next) => {
 		const decision = await next();
 		if (decision.kind === "reject" || signal.aborted) return decision;
@@ -110,7 +146,7 @@ export function apply(ctx) {
 			return zh;
 		});
 		return changed ? { ...decision, messages } : decision;
-	}, { prepend: true });
+	}, { prepend: true, zhHoist: true });
 	// compaction 摘要请求：原地把末元素（英文指令）换成中文指令。
 	// 必须 global：摘要调用由 compaction backend 发起，不落在本插件 scope。
 	ctx.on("llm/stream", (options, next) => {
