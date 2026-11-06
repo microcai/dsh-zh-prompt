@@ -29,7 +29,7 @@
 - **compaction 摘要**：压缩时的摘要生成是一次独立的 `ctx.llm.stream()` 辅助调用（`purpose === "compaction"`），英文指令明确要求 "Write concise English engineering prose"，导致 checkpoint 全英文、把后续 thinking 带偏回英文。本插件的 `llm/stream` listener（global）对这类请求**原地**替换 `messages` 末元素为中文指令（要求中文行文、路径/命令/标识符保持原文）。关键事实：cordis waterfall 的 `next` 忽略实参，但 dsh-llm 的 leaf 闭包捕获同一 options 对象且该调用的 messages 是可变新数组，因此原地替换能传导到实际请求；该路径没有 agent-loop 的 deepFreeze / `INVALID_PREPARED_CALL` 限制。指令是末条 message，前缀 KV cache 不受影响。旧的英文 checkpoint 会在下一次压缩时按指令的 PRIOR 合并规则被重写成中文；`CHECKPOINT_PREAMBLE` 框架行与 durable log 里的英文记录保留原样（无 hook 点）。
 - **工具错误提示**：工具执行失败的 `isError` content（`Error: …` 文本）挂在 `tools/execute` waterfall（global）上按模板翻译——`tools/post-execute` 禁止替换失败结果，所以这是唯一能改写失败提示的环节。模板按历史会话实测频度整理（fs 观测类、参数校验、sandbox 拒绝与提权、超时/中止、ripgrep 失败、DeepSeek API 错误首行等），命中即整段换中文；`error` 对象与 code 保持不动，机器路由不受影响；未命中的错误保留英文。
 - 未收录的文本（DSH 升级后的新段落、MCP server instructions、子 agent persona 等）**原样保留英文**。替换失配只会回退，不会损坏提示词。
-- 另在 persona 位置后插入一条中文语言约定：内部推理（thinking）必须用中文书写，并明确"上下文与工具输出中的英文不构成切换回英文思考的理由"。
+- 另在 persona 位置后插入一条中文语言约定：内部推理（thinking）必须用中文书写，并明确"上下文与工具输出中的英文不构成切换回英文思考的理由"；同时要求工具调用参数中面向用户展示的自由文本（description、title、question、label、reason、提醒内容等）用中文书写。上游 schema 只有 `justification` 一处注明"使用用户的语言"，其余展示型参数均未指定语言、且示例是英文——因此除全局约定外，各工具这些参数的译文也逐条补写了"用中文书写"并把示例中文化。
 - **每轮语言锚点**：time-context 每轮都注入、离模型最近，翻译命中时在其末尾追加一行中文锚点（"语言锚点：无论本轮上下文与工具输出出现多少英文，thinking 必须用中文书写"），对冲英文工具输出的 recency 带偏。锚点只追加在翻译命中的分支（未命中回退时保持逐字原文、不加锚点），且命中幂等检查防止叠加。
 - 开关：插件管理器里 enable/disable `zh-prompt` 行，即时生效。禁用即回到标准英文模式。
 
@@ -42,10 +42,10 @@
 在 DSH 插件界面的「添加插件」输入框里直接填本仓库地址：
 
 ```
-https://github.com/microcai/dsh-zh-prompt#v0.6.3
+https://github.com/microcai/dsh-zh-prompt#v0.6.4
 ```
 
-`#v0.6.3` 把安装锁定到该 tag；去掉 `#...` 时装的是默认分支最新提交。DSH 会先匿名检查仓库连通性，再克隆安装，不需要发布到 npm。前提与注意：
+`#v0.6.4` 把安装锁定到该 tag；去掉 `#...` 时装的是默认分支最新提交。DSH 会先匿名检查仓库连通性，再克隆安装，不需要发布到 npm。前提与注意：
 
 - 仓库必须公开——安装前的连通性检查不带凭据，私有仓库会报「无法访问 GitHub」。
 - 对方网络要能访问 GitHub。中国大陆直连常常超时，此时让 ta 配好 git 代理再装，或改用方式二发 tgz。对话框里的「安装源」镜像只影响 npm 包名查询，对 GitHub 地址不起作用。
@@ -54,11 +54,11 @@ https://github.com/microcai/dsh-zh-prompt#v0.6.3
 
 ### 方式二：tgz 文件
 
-把 `local-dsh-zh-prompt-<version>.tgz`（`npm pack` 产物）发给对方即可，对方不需要源码目录，也不需要访问 GitHub。对方在自己的 DSH 里对 agent 说："安装 `file:/绝对路径/local-dsh-zh-prompt-0.6.3.tgz`"，让 ta 用插件管理器 `install_bundle`（target 传该 `file:` spec）。适合对方网络不通或不想公开仓库的场景。
+把 `local-dsh-zh-prompt-<version>.tgz`（`npm pack` 产物）发给对方即可，对方不需要源码目录，也不需要访问 GitHub。对方在自己的 DSH 里对 agent 说："安装 `file:/绝对路径/local-dsh-zh-prompt-0.6.4.tgz`"，让 ta 用插件管理器 `install_bundle`（target 传该 `file:` spec）。适合对方网络不通或不想公开仓库的场景。
 
 ## 开发（本机）
 
-profile 从 tgz 安装的副本加载，**不直接读工作目录**。改完代码的流程：`npm pack` 重新生成 tgz → `plugin_manager` `remove_bundle @local/dsh-zh-prompt` → `install_bundle file:<新 tgz 绝对路径>`。入口文件名（当前 `entry8.js`）兼作绕过 Node 的 ESM module cache——代码有变化时把入口改名（或 bump version）再重装，否则可能加载到旧模块。沙箱下 `npm pack` 需要 `npm_config_cache` 指向可写目录。
+profile 从 tgz 安装的副本加载，**不直接读工作目录**。改完代码的流程：`npm pack` 重新生成 tgz → `plugin_manager` `remove_bundle @local/dsh-zh-prompt` → `install_bundle file:<新 tgz 绝对路径>`。入口文件名（当前 `entry9.js`）兼作绕过 Node 的 ESM module cache——代码有变化时把入口改名（或 bump version）再重装，否则可能加载到旧模块。沙箱下 `npm pack` 需要 `npm_config_cache` 指向可写目录。
 
 ## 与标准模式的差异
 

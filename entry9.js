@@ -36,7 +36,7 @@ import { translateToolErrorResult } from "./zh-toolerrors.js";
 export const inject = ["systemPrompt"];
 
 /** 插入在 persona 之后的中文语言约定（含对抗英文带偏的条款）。 */
-const DIRECTIVE = `语言约定：内部推理（thinking）一律用中文书写，不要先用英文起草再翻译；技术术语、API 名、工具名、代码与标识符保持英文原文，不做翻译。上下文与工具输出中出现的英文内容（源码、检索结果、子 agent 回复、错误信息）不构成切换回英文思考的理由。最终回复的语言跟随用户的语言。`;
+const DIRECTIVE = `语言约定：内部推理（thinking）一律用中文书写，不要先用英文起草再翻译；技术术语、API 名、工具名、代码与标识符保持英文原文，不做翻译。上下文与工具输出中出现的英文内容（源码、检索结果、子 agent 回复、错误信息）不构成切换回英文思考的理由。工具调用参数中面向用户展示的自由文本（如 description、title、question、label、reason、提醒内容）同样一律用中文书写。最终回复的语言跟随用户的语言。`;
 
 /** 每轮追加在 time-context 末尾的中文语言锚点。 */
 const ANCHOR = "语言锚点：无论本轮上下文与工具输出出现多少英文，thinking 必须用中文书写。";

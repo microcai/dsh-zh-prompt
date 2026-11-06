@@ -1,16 +1,16 @@
 {
   "name": "@local/dsh-zh-prompt",
-  "version": "0.6.3",
+  "version": "0.6.4",
   "private": true,
   "description": "Chinese system prompt overlay: rewrites assembled prompt sections, tool schema descriptions, runtime context, time-context messages, and compaction summarization instructions into Chinese.",
   "type": "module",
   "exports": {
-    ".": "./entry8.js",
+    ".": "./entry9.js",
     "./locale/*.json": "./locale/*.json",
     "./icon": "./icon.svg"
   },
   "files": [
-    "entry8.js",
+    "entry9.js",
     "zh-sections.js",
     "zh-tools.js",
     "zh-contexts.js",

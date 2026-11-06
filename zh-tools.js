@@ -51,7 +51,7 @@ t(`Block until the job finishes or the timeout expires; a timed-out wait leaves 
 t(`Max wait in milliseconds with wait: true. Defaults to and is capped by configuration.`, `wait: true 时的最大等待毫秒数。默认值与上限由配置决定。`);
 t(`List your background jobs (running and finished) with their ids, kinds, and statuses.`, `列出你的后台 job（运行中与已结束），包含 id、类型与状态。`);
 t(`Request cancellation of a running background job.`, `请求取消一个正在运行的后台 job。`);
-t(`Optional short reason, recorded in the log and forwarded to the job.`, `可选的简短理由，记入日志并转发给 job。`);
+t(`Optional short reason, recorded in the log and forwarded to the job.`, `可选的简短理由，用中文书写，记入日志并转发给 job。`);
 
 // ── skill / web / present ────────────────────────────────────────────────────
 t(`Load the full instructions for a skill. Call it before acting on a task that names or clearly matches a skill in the session skill catalog.`, `加载某个 skill 的完整指令。在处理明确提及或明显匹配会话 skill 目录的 task 之前调用它。`);
@@ -63,7 +63,7 @@ t(`The HTTP(S) URL to fetch.`, `要抓取的 HTTP(S) URL。`);
 t(`Declare existing files as final deliverables for the user. Use it when the user needs a separate file, especially Office documents, spreadsheets, and slide decks; prefer your final response when that suffices. The user opens the current files; their contents are not copied.`, `把现有文件声明为给用户的最终交付物。当用户需要独立文件时使用，尤其是 Office 文档、电子表格与幻灯片；最终回复足够时优先用回复。用户打开当前文件；内容不会被复制。`);
 t(`Usually the 1-2 most important deliverables; at most 4 per call.`, `通常是 1-2 个最重要的交付物；每次调用至多 4 个。`);
 t(`Path of an existing regular file. Relative paths use the Session working directory.`, `现有常规文件的路径。相对路径使用 Session 工作目录。`);
-t(`Brief description for the user.`, `给用户的简短描述。`);
+t(`Brief description for the user.`, `给用户的简短描述，用中文书写。`);
 
 // ── cordis inspect / plugin_manager ──────────────────────────────────────────
 t(`List every Cordis Inspect Provider currently known to the Host, including local Host Providers and the latest manifests synchronized from the Client. Each entry includes its platform, purpose, read-only methods, and input/output schemas. Call this Tool before writing or configuring a plugin, then select the provider and method for cordis_inspect_query from its result. Do not guess names or treat an Inspect method as a business Service that Plugin code can call.`, `列出 Host 当前已知的全部 Cordis Inspect Provider，包括本地 Host Provider 与从 Client 同步的最新 manifest。每个条目包含 platform、用途、只读方法与输入/输出 schema。编写或配置 plugin 之前先调用此 Tool，然后从其结果中为 cordis_inspect_query 选择 provider 与 method。不要猜测名字，也不要把 Inspect method 当作 plugin 代码可调用的业务 Service。`);
@@ -85,7 +85,7 @@ t(`List page size, from 1 to 100; defaults to 25.`, `列表页大小，1 到 100
 
 // ── bash ─────────────────────────────────────────────────────────────────────
 t(`Execute a bash command (\`bash -c\`) and return its stdout/stderr. Each call runs in a fresh shell; pass \`workdir\` instead of using \`cd\`. Managed \`$DSH_*\` variables expose current harness environment facts. Long output is truncated to its tail; the full output is saved to a file whose path is reported when available. Provide \`description\` before \`command\` in the arguments. Before any delete or move, verify that the resolved absolute target path is the intended one; never run it against a computed path you have not checked. An unset variable expands to an empty string, so guard variables in such paths with \`\${VAR:?}\`. Commands may run under a file sandbox; a blocked file operation is reported as \`[sandbox: file access denied under <mode> mode]\`, a policy denial: do not retry another way.`, `执行一条 bash 命令（\`bash -c\`）并返回其 stdout/stderr。每次调用都在全新 shell 中运行；用 \`workdir\` 而不是 \`cd\`。受管理的 \`$DSH_*\` 变量暴露当前 harness 环境事实。长输出会截断为末尾部分；完整输出保存到文件，可用时报告其路径。参数中先提供 \`description\` 再给 \`command\`。任何删除或移动之前，先确认解析后的绝对目标路径就是预期目标；绝不对未核对的计算路径执行。未设置的变量展开为空字符串，因此这类路径中的变量要用 \`\${VAR:?}\` 守卫。命令可能在文件沙箱下运行；被阻止的文件操作会报告为 \`[sandbox: file access denied under <mode> mode]\`，这是策略拒绝：不要换其他途径重试。`);
-t(`Clear, concise description of what this command does in active voice, 5-10 words (shown in the UI). Examples: "ls" → "List files in current directory"; "git status" → "Show working tree status"; "npm install" → "Install package dependencies".`, `对这条命令做什么的清晰简洁描述，主动语态，5-10 个词（显示在 UI 中）。示例："ls" → "List files in current directory"；"git status" → "Show working tree status"；"npm install" → "Install package dependencies"。`);
+t(`Clear, concise description of what this command does in active voice, 5-10 words (shown in the UI). Examples: "ls" → "List files in current directory"; "git status" → "Show working tree status"; "npm install" → "Install package dependencies".`, `对这条命令做什么的清晰简洁描述，用中文书写，主动语态，5-10 个词（显示在 UI 中）。示例："ls" → "列出当前目录的文件"；"git status" → "查看工作树状态"；"npm install" → "安装依赖包"。`);
 t(`The bash command to execute.`, `要执行的 bash 命令。`);
 t(`Timeout in milliseconds. The executor applies its configured default and cap; on expiry the command moves to the background as a job instead of being killed.`, `超时毫秒数。执行器应用其配置的默认值与上限；超时后命令转入后台成为 job，而不是被杀死。`);
 t(`Working directory for this command. Defaults to the session workspace; a relative path is resolved against it.`, `该命令的工作目录。默认为会话 workspace；相对路径基于它解析。`);
@@ -103,7 +103,7 @@ t(`List subagents you started, with their ids, labels, and status. running means
 t(`children (default) lists direct children, which accept send_message in any status. descendants lists the whole tree below you with each entry's parent session id and depth; entries deeper than 1 accept only interrupt_agent.`, `children（默认）列出直接子 agent，它们在任何状态下都接受 send_message。descendants 列出你之下的整棵树，每个条目带父 session id 与深度；深度大于 1 的条目只接受 interrupt_agent。`);
 t(`Record and update a task list to plan multi-step work and show progress; skip it for trivial single-step tasks. Add one todo per concrete step before you start. While work remains, keep the todos being worked on \`in_progress\`, several only when work runs in parallel. Mark each todo \`completed\` as soon as it is done.`, `记录并更新任务列表以规划多步工作并展示进度；琐碎的单步任务跳过它。开始前为每个具体步骤添加一个 todo。工作未完时，把正在做的 todo 保持 \`in_progress\`，只有并行工作才同时多个。每完成一个立即标记 \`completed\`。`);
 t(`The COMPLETE task list, replacing any previous list.`, `完整任务列表，替换之前的全部列表。`);
-t(`What the task is — a short imperative line.`, `任务是什么——一行简短的祈使句。`);
+t(`What the task is — a short imperative line.`, `任务是什么——一行简短的祈使句，用中文书写。`);
 t(`pending (not started) | in_progress (now) | completed (done).`, `pending（未开始）| in_progress（正在做）| completed（已完成）。`);
 
 // ── workflow ─────────────────────────────────────────────────────────────────
@@ -127,11 +127,11 @@ Misused hooks (bad arguments, unknown options, unsupported schemas, tripped caps
 t(`The plain JavaScript body, not TypeScript and without an \`export const meta\` statement; top-level await is allowed. End with \`return <value>\`; the JSON-serializable value is this tool's result.`, `纯 JavaScript 脚本正文，不是 TypeScript，也不含 \`export const meta\` 语句；允许顶层 await。以 \`return <value>\` 结尾；可 JSON 序列化的值即此 tool 的结果。`);
 t(`The workflow identity as plain JSON, not code.`, `workflow 的身份信息，用普通 JSON，不是代码。`);
 t(`Short kebab-case workflow name.`, `简短 kebab-case 的 workflow 名。`);
-t(`One-line description of what the workflow does.`, `一行说明该 workflow 做什么。`);
+t(`One-line description of what the workflow does.`, `一行说明该 workflow 做什么，用中文书写。`);
 t(`Optional guidance on when this workflow applies.`, `可选：说明此 workflow 何时适用。`);
 t(`Optional phase declarations matched by phase() calls.`, `可选的 phase 声明列表，由 phase() 调用按 title 精确匹配。`);
 t(`The phase title phase() calls match by exact string.`, `phase() 调用按精确字符串匹配的 phase 标题。`);
-t(`Optional one-line description of the phase.`, `可选：一行描述该 phase。`);
+t(`Optional one-line description of the phase.`, `可选：一行描述该 phase，用中文书写。`);
 t(`Optional provider override this phase is expected to use.`, `可选：该 phase 预期使用的 provider 覆盖。`);
 t(`Optional model override this phase is expected to use.`, `可选：该 phase 预期使用的 model 覆盖。`);
 t(`Optional JSON input exposed to the script as the \`args\` global (wrap a bare list as a field, e.g. {"files": [...]}).`, `可选 JSON 输入，以 \`args\` 全局变量暴露给脚本（裸列表要包成字段，例如 {"files": [...]}）。`);
@@ -140,40 +140,40 @@ t(`Run as a background job: return a job id immediately instead of waiting; the 
 // ── goal ─────────────────────────────────────────────────────────────────────
 t(`Read the current session goal, including the id and revision that update_goal requires.`, `读取当前会话 goal，包括 update_goal 所需的 id 与 revision。`);
 t(`Create a persisted goal that keeps this session working across automatic continuation rounds. Use it when the direct human request is a long-running objective, even if the user did not say "goal"; not for single-turn work.`, `创建一个持久 goal，使本会话在自动继续轮次中保持工作。当人类的直接请求是长期目标时使用，即使用户没有说 "goal"；不适用于单轮工作。`);
-t(`The concrete completion objective inferred from the direct human request.`, `从人类的直接请求推断出的具体完成目标。`);
+t(`The concrete completion objective inferred from the direct human request.`, `从人类的直接请求推断出的具体完成目标，用中文书写。`);
 t(`Optional positive safe-integer limit on automatic continuation rounds.`, `可选的正安全整数上限，限制自动继续轮次。`);
 t(`Update the current goal.`, `更新当前 goal。`);
 t(`Exact id returned by get_goal.`, `get_goal 返回的确切 id。`);
 t(`Exact positive revision returned by get_goal.`, `get_goal 返回的确切正 revision。`);
 t(`edit, pause, and resume require a direct top-level human request. complete and blocked are also allowed during an automatic continuation of this goal; blocked is rejected before the configured minimum round count.`, `edit、pause、resume 需要人类的直接顶层请求。complete 与 blocked 在本 goal 的自动继续期间也允许；blocked 在达到配置的最小轮数之前会被拒绝。`);
-t(`Replacement objective; valid only with action edit.`, `替换目标；仅 action edit 时有效。`);
+t(`Replacement objective; valid only with action edit.`, `替换目标；仅 action edit 时有效，用中文书写。`);
 t(`Replacement cap; valid only with action edit.`, `替换上限；仅 action edit 时有效。`);
-t(`Required only with action blocked: the concrete condition that persisted across rounds and blocks progress.`, `仅 action blocked 时必需：持续多轮并阻碍进展的具体条件。`);
+t(`Required only with action blocked: the concrete condition that persisted across rounds and blocks progress.`, `仅 action blocked 时必需：持续多轮并阻碍进展的具体条件，用中文书写。`);
 
 // ── ask_user_question / exit_plan_mode ───────────────────────────────────────
 t(`Ask the user a concise question when you need confirmation, a choice, or missing information before proceeding.`, `在继续之前需要确认、选择或缺失信息时，向用户提出简洁的问题。`);
 t(`Questions to ask the user before continuing.`, `继续之前要问用户的问题。`);
 t(`Stable id for this question; echoed in the answer.`, `本问题的稳定 id；回答中会回显。`);
-t(`The specific question to ask the user.`, `要问用户的具体问题。`);
-t(`Optional short heading for the question, such as "Confirm" or "Choose Mode".`, `可选的短标题，例如 "Confirm" 或 "Choose Mode"。`);
+t(`The specific question to ask the user.`, `要问用户的具体问题，用中文书写。`);
+t(`Optional short heading for the question, such as "Confirm" or "Choose Mode".`, `可选的短标题，用中文书写，例如 "确认" 或 "选择模式"。`);
 t(`Optional choices to show the user. If you recommend one, put it first and append "(Recommended)" to that label.`, `展示给用户的可选选项。如有推荐项，放在第一个并在 label 末尾追加 "(Recommended)"。`);
-t(`Short user-facing option label.`, `面向用户的简短选项标签。`);
-t(`One sentence explaining the tradeoff or impact.`, `一句话解释权衡或影响。`);
+t(`Short user-facing option label.`, `面向用户的简短选项标签，用中文书写。`);
+t(`One sentence explaining the tradeoff or impact.`, `一句话解释权衡或影响，用中文书写。`);
 t(`Whether the user may select more than one option. Defaults to false.`, `用户是否可以选择多个选项。默认 false。`);
 t(`Use only in plan mode. Present your plan for the user's review and, on approval, leave plan mode. The user may approve (carry out the plan from your next step) or keep planning — their feedback comes back in the tool result; revise and present again.`, `仅在 plan mode 中使用。向用户展示你的计划以供审阅，批准后离开 plan mode。用户可以批准（从你的下一步开始执行计划）或继续规划——他们的反馈在 tool 结果中返回；修改后再次展示。`);
-t(`The complete plan, as markdown, starting with a # heading that names it.`, `完整的计划，markdown 格式，以 # 标题开头。`);
+t(`The complete plan, as markdown, starting with a # heading that names it.`, `完整的计划，markdown 格式，以 # 标题开头，用中文书写。`);
 
 // ── subagent / subagent_fork ─────────────────────────────────────────────────
 t(`Delegate a task to a subagent that inherits this conversation: a child agent seeded with all completed turns so far (it does not see the current in-flight turn). Use this when the subtask builds on this conversation's context — a follow-up analysis, a review, a continuation — without consuming this conversation's context for the work itself. You receive its result, not its intermediate steps. This tool starts an independently managed subagent and immediately returns its id. The runtime notifies you when it finishes. The child reports results with \`send_message\`; use \`send_message\` to steer it while running or continue its conversation after it finishes.`, `把一个任务委派给继承本对话的 subagent：一个以至此所有已完成轮次为种子的子 agent（它看不到当前进行中的一轮）。当子任务基于本对话的上下文——后续分析、review、继续——而不把本对话的上下文消耗在工作上时使用。你收到其结果，而不是中间步骤。此 tool 启动一个独立管理的 subagent 并立即返回其 id。runtime 在其结束时通知你。子 agent 用 \`send_message\` 上报结果；运行中用 \`send_message\` 引导它，结束后用它继续对话。`);
 t(`Initial child working directory. Relative paths use your current directory; omitted inherits it. Later directory changes in either agent are independent.`, `子 agent 初始工作目录。相对路径基于你当前目录；省略则继承。之后两边各自的目录变更互不影响。`);
-t(`A short (3-5 word) description of the delegated task, for display.`, `简短（3-5 词）的委派任务描述，用于展示。`);
+t(`A short (3-5 word) description of the delegated task, for display.`, `简短（3-5 词）的委派任务描述，用中文书写，用于展示。`);
 t(`The task for the subagent. It already sees this conversation's completed turns, so build on them freely and state only what is new.`, `给子 agent 的任务。它已经看到本会话已完成的轮次，所以可以自由基于它们，只说明新的部分。`);
 t(`Delegate a self-contained task to a subagent (a separate agent that works in its own context) to offload focused, independent work — research, a scoped implementation, an analysis — so it does not consume this conversation's context. The subagent returns its result, not its intermediate steps. This tool starts an independently managed subagent and immediately returns its id. The runtime notifies you when it finishes. The child reports results with \`send_message\`; use \`send_message\` to steer it while running or continue its conversation after it finishes.`, `把一个自包含任务委派给 subagent（在自己的上下文中工作的独立 agent），以卸载专注、独立的工作——研究、限定范围的实现、分析——从而不消耗本对话的上下文。subagent 返回其结果，而不是中间步骤。此 tool 启动一个独立管理的 subagent 并立即返回其 id。runtime 在其结束时通知你。子 agent 用 \`send_message\` 上报结果；运行中用 \`send_message\` 引导它，结束后用它继续对话。`);
 t(`The complete, self-contained task for the subagent. It does not share this conversation's context, so include everything it needs.`, `给 subagent 的完整自包含任务。它不共享本对话的上下文，所以包含它所需的一切。`);
 
 // ── schedule ─────────────────────────────────────────────────────────────────
 t(`Create a reminder in the current session that delivers prompt when it becomes due. Supply exactly one timing parameter: after_seconds, at, every_seconds, daily, weekly, or cron. Local times that do not exist in the zone are skipped; repeated local times fire once, at the earlier instant. After downtime, a recurring reminder delivers only its latest missed occurrence. Delivery can repeat after a crash.`, `在当前会话创建一个到期时送达 prompt 的提醒。提供且仅提供一个 timing 参数：after_seconds、at、every_seconds、daily、weekly 或 cron。时区中不存在的本地时间会被跳过；重复出现的本地时间只触发一次，在较早的瞬间。停机之后，重复提醒只送达最近一次错过的发生。崩溃后送达可能重复。`);
-t(`Reminder content to present when the target becomes due.`, `到期时呈现的提醒内容。`);
+t(`Reminder content to present when the target becomes due.`, `到期时呈现的提醒内容，用中文书写。`);
 t(`Concise task name in the user's language, at most 120 characters. Name only the core action and subject; keep essential target identifiers such as PR numbers and branch names. Do not include execution frequency (e.g. daily, hourly), scheduled dates/times, time zones, task status, or configuration and execution details (e.g. read-only mode, profile-tag filters), even when embedded in the requested or existing title. Do not append parenthetical notes. Put scheduling information in the timing parameters and execution instructions in prompt.`, `以用户语言命名的简洁任务名，至多 120 个字符。只命名核心动作与主题；保留必要的目标标识符，如 PR 编号与 branch 名。不要包含执行频率（如 daily、hourly）、计划日期/时间、时区、任务状态，或配置与执行细节（如只读模式、profile-tag 过滤），即使它们嵌在请求的或已有的 title 里。不要追加括号备注。调度信息放进 timing 参数，执行指令放进 prompt。`);
 t(`Delay in whole seconds.`, `延迟的整秒数。`);
 t(`Fixed-rate interval in whole seconds, at least 60, aligned to the creation time; changing it with schedule_update re-aligns it to the save time.`, `固定间隔的整秒数，至少 60，对齐到创建时刻；用 schedule_update 修改会重新对齐到保存时刻。`);
@@ -192,7 +192,7 @@ t(`Exact schedule id.`, `确切的 schedule id。`);
 t(`Change a reminder in place, keeping its id. Supply a new title, prompt, or at most one timing parameter; omitted fields keep their stored values. To change a relative delay, create a new reminder.`, `就地修改一个提醒，保持其 id。提供新的 title、prompt，或至多一个 timing 参数；省略的字段保留存储值。要修改相对延迟，请新建提醒。`);
 t(`Schedule id returned by schedule_list.`, `schedule_list 返回的 schedule id。`);
 t(`New task name; follow the schedule_create title rules.`, `新任务名；遵循 schedule_create 的 title 规则。`);
-t(`New reminder content.`, `新的提醒内容。`);
+t(`New reminder content.`, `新的提醒内容，用中文书写。`);
 
 /** 递归翻译 schema 节点及其嵌套 description。 */
 function walk(node) {
