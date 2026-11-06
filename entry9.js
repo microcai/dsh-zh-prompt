@@ -2,7 +2,15 @@
  * dsh-zh-prompt — 把组装后的系统提示词 section、工具 schema 描述、runtime
  * context 快照、time-context 消息、skill 目录消息与 compaction 摘要指令中文化。
  *
- * - sections/tools：挂在 `system-prompt/assemble` waterfall 上逐条替换。
+ * - sections：挂在 `system-prompt/assemble` waterfall 上逐条替换。
+ * - tools：dsh 0.2.2 起 `system-prompt/assemble` waterfall 的入参是
+ *   `PromptPresentation`（只有 sections/contexts/variables），tool declarations
+ *   由 provider 收集并在 waterfall **之后**才挂回返回值（dsh-system-prompt
+ *   `assemble()`：先 `structuredClone` 出 provider-owned tools，再 dispatch）。
+ *   因此在 waterfall 里读 `assembly.tools` 会拿到 undefined 而抛
+ *   `assembly.tools is not iterable`。改为与 contexts 同构的做法：包装各
+ *   layer 的 tool provider，译文在 provider 输出上生效，早于 assemble 的
+ *   clone 与 `request/header` 落盘，请求 payload 与 durable log 一并中文。
  * - contexts：provider 每次刷新重跑，因此直接包装已注册 entry 的 text 函数，
  *   `system-prompt/change` 时对新注册项补齐（幂等）。
  * - snapshot 框架行：`joinContextSections` 拼在 body 外的英文框架行无法在 append
@@ -89,6 +97,41 @@ function wrapAllContexts(ctx) {
 }
 
 /**
+ * 包装一个 tool provider：provider 可能返回它自己缓存的 schema 对象，因此浅拷贝
+ * schema 并 `structuredClone` parameters 后再翻译，绝不污染 provider 的原始状态
+ * （tool registry、UI 与其它 consumer 共用同一批对象）。
+ */
+function wrapToolProvider(table, key, provider) {
+	if (wrappers.has(provider)) return;
+	const wrapper = (context) => {
+		const result = provider(context);
+		const schemas = result.schemas.map((schema) => {
+			const copy = { ...schema };
+			if (schema.parameters !== undefined) copy.parameters = structuredClone(schema.parameters);
+			translateTool(copy);
+			return copy;
+		});
+		return { ...result, schemas };
+	};
+	wrappers.add(wrapper);
+	table.data.set(key, wrapper);
+}
+
+/**
+ * 遍历全部已注册 tool provider（global 与各 scope），补齐包装。
+ *
+ * `AnonymousEntries` 以私有 Symbol 为 key 持有 provider，无法像 context entry
+ * 那样原地改字段；这里直接改写其内部 Map（同 key set 不影响进行中的迭代）。
+ * provider 注册与 dispose 都会 emit `system-prompt/change`，所以 apply 时的一轮
+ * 加上 change 监听即可覆盖后注册的 tool（MCP、懒加载工具），WeakSet 保证幂等。
+ */
+function wrapAllToolProviders(ctx) {
+	const layers = ctx.systemPrompt.layers;
+	const tables = [layers.global.toolProviders, ...[...layers.scoped.values()].map((layer) => layer.toolProviders)];
+	for (const table of tables) for (const [key, provider] of table.data) wrapToolProvider(table, key, provider);
+}
+
+/**
  * 翻译一条 time-context 消息并在末尾追加语言锚点；
  * 不是、未命中翻译表或已翻译（含锚点）则原样返回。
  */
@@ -125,15 +168,20 @@ export function apply(ctx) {
 	}));
 	ctx.on("system-prompt/assemble", async (_assembly, _context, next) => {
 		const assembly = await next();
+		// 0.2.2 起 waterfall 入参不含 tools（tool declarations 由 provider 拥有，
+		// waterfall 之后才挂回）；工具译文已在 provider 上生效。
 		for (const section of assembly.sections) {
 			const zh = translateSection(section.text);
 			if (zh !== undefined) section.text = zh;
 		}
-		for (const tool of assembly.tools) translateTool(tool);
 		return assembly;
 	});
 	wrapAllContexts(ctx);
-	ctx.on("system-prompt/change", () => wrapAllContexts(ctx));
+	wrapAllToolProviders(ctx);
+	ctx.on("system-prompt/change", () => {
+		wrapAllContexts(ctx);
+		wrapAllToolProviders(ctx);
+	});
 	// 每次 waterfall dispatch 读取 hooks 数组之前同步自置顶，确保本插件的
 	// pre-step listener 恒在 time-context 的外层（见 hoistPreStepListener）。
 	ctx.on("internal/dispatch", (type, name) => {

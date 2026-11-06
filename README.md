@@ -42,10 +42,10 @@
 在 DSH 插件界面的「添加插件」输入框里直接填本仓库地址：
 
 ```
-https://github.com/microcai/dsh-zh-prompt#v0.6.4
+https://github.com/microcai/dsh-zh-prompt#v0.6.5
 ```
 
-`#v0.6.4` 把安装锁定到该 tag；去掉 `#...` 时装的是默认分支最新提交。DSH 会先匿名检查仓库连通性，再克隆安装，不需要发布到 npm。前提与注意：
+`#v0.6.5` 把安装锁定到该 tag；去掉 `#...` 时装的是默认分支最新提交。DSH 会先匿名检查仓库连通性，再克隆安装，不需要发布到 npm。前提与注意：
 
 - 仓库必须公开——安装前的连通性检查不带凭据，私有仓库会报「无法访问 GitHub」。
 - 对方网络要能访问 GitHub。中国大陆直连常常超时，此时让 ta 配好 git 代理再装，或改用方式二发 tgz。对话框里的「安装源」镜像只影响 npm 包名查询，对 GitHub 地址不起作用。
@@ -54,7 +54,7 @@ https://github.com/microcai/dsh-zh-prompt#v0.6.4
 
 ### 方式二：tgz 文件
 
-把 `local-dsh-zh-prompt-<version>.tgz`（`npm pack` 产物）发给对方即可，对方不需要源码目录，也不需要访问 GitHub。对方在自己的 DSH 里对 agent 说："安装 `file:/绝对路径/local-dsh-zh-prompt-0.6.4.tgz`"，让 ta 用插件管理器 `install_bundle`（target 传该 `file:` spec）。适合对方网络不通或不想公开仓库的场景。
+把 `local-dsh-zh-prompt-<version>.tgz`（`npm pack` 产物）发给对方即可，对方不需要源码目录，也不需要访问 GitHub。对方在自己的 DSH 里对 agent 说："安装 `file:/绝对路径/local-dsh-zh-prompt-0.6.5.tgz`"，让 ta 用插件管理器 `install_bundle`（target 传该 `file:` spec）。适合对方网络不通或不想公开仓库的场景。
 
 ## 开发（本机）
 

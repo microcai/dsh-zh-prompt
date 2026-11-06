@@ -1,9 +1,9 @@
 /**
  * zh-tools.js — 工具 schema description 的中译表。
  *
- * key 是运行时英文原文（精确匹配，来自 cordis_inspect_query Tool.listTools）；
- * 命中即替换，未命中的文本原样保留英文。DSH 升级后原文漂移只会导致回退英文，
- * 不会损坏 schema。
+ * key 是运行时英文原文（精确匹配）；0.2.2-rc.1 的原文以禁用插件的会话
+ * request/header 实测与安装源码双重核对。命中即替换，未命中的文本原样保留英文。
+ * DSH 升级后原文漂移只会导致回退英文，不会损坏 schema。
  */
 const zh = new Map();
 
@@ -15,8 +15,6 @@ function t(en, cn) {
 // ── working_directory / create_worktree ──────────────────────────────────────
 t(`Read the current working directory, or change it with cd. Relative paths use the current directory. Existing shells and running processes keep their own directories.`, `读取当前工作目录，或用 cd 更改它。相对路径基于当前目录解析。已有 shell 与运行中的进程保持各自的目录。`);
 t(`Existing directory to enter. Omit to read the current directory.`, `要进入的现有目录。省略则读取当前目录。`);
-t(`Create a new Git branch and worktree from a local commit, branch, or tag, then change this session's working directory to it. Defaults to HEAD and a generated name. Uncommitted files stay in the source checkout. Existing names fail. Use working_directory with cd to leave; the checkout and branch remain.`, `从本地 commit、branch 或 tag 创建新的 Git branch 与 worktree，然后把本会话的工作目录切到它。默认从 HEAD 起、使用生成的名字。未提交的文件留在原 checkout。重名会失败。用 working_directory 的 cd 离开；checkout 与 branch 仍然存在。`);
-t(`New branch name, also used as the checkout directory. Omit to generate a unique name.`, `新 branch 名，也用作 checkout 目录名。省略则生成唯一名字。`);
 t(`Local commit, branch, or tag to start from. Defaults to HEAD; no fetch is performed.`, `起始的本地 commit、branch 或 tag。默认 HEAD；不会执行 fetch。`);
 
 // ── read / write / edit / glob / grep / read_image ───────────────────────────
@@ -60,7 +58,6 @@ t(`Search the web for current information. Returns an optional summary answer an
 t(`1–4 search queries; their results are merged.`, `1–4 条搜索查询；结果会合并。`);
 t(`Fetch the content of a specific HTTP(S) URL and return it decoded to text.`, `抓取特定 HTTP(S) URL 的内容并解码为文本返回。`);
 t(`The HTTP(S) URL to fetch.`, `要抓取的 HTTP(S) URL。`);
-t(`Declare existing files as final deliverables for the user. Use it when the user needs a separate file, especially Office documents, spreadsheets, and slide decks; prefer your final response when that suffices. The user opens the current files; their contents are not copied.`, `把现有文件声明为给用户的最终交付物。当用户需要独立文件时使用，尤其是 Office 文档、电子表格与幻灯片；最终回复足够时优先用回复。用户打开当前文件；内容不会被复制。`);
 t(`Usually the 1-2 most important deliverables; at most 4 per call.`, `通常是 1-2 个最重要的交付物；每次调用至多 4 个。`);
 t(`Path of an existing regular file. Relative paths use the Session working directory.`, `现有常规文件的路径。相对路径使用 Session 工作目录。`);
 t(`Brief description for the user.`, `给用户的简短描述，用中文书写。`);
@@ -151,7 +148,6 @@ t(`Replacement cap; valid only with action edit.`, `替换上限；仅 action ed
 t(`Required only with action blocked: the concrete condition that persisted across rounds and blocks progress.`, `仅 action blocked 时必需：持续多轮并阻碍进展的具体条件，用中文书写。`);
 
 // ── ask_user_question / exit_plan_mode ───────────────────────────────────────
-t(`Ask the user a concise question when you need confirmation, a choice, or missing information before proceeding.`, `在继续之前需要确认、选择或缺失信息时，向用户提出简洁的问题。`);
 t(`Questions to ask the user before continuing.`, `继续之前要问用户的问题。`);
 t(`Stable id for this question; echoed in the answer.`, `本问题的稳定 id；回答中会回显。`);
 t(`The specific question to ask the user.`, `要问用户的具体问题，用中文书写。`);
@@ -168,32 +164,48 @@ t(`Delegate a task to a subagent that inherits this conversation: a child agent 
 t(`Initial child working directory. Relative paths use your current directory; omitted inherits it. Later directory changes in either agent are independent.`, `子 agent 初始工作目录。相对路径基于你当前目录；省略则继承。之后两边各自的目录变更互不影响。`);
 t(`A short (3-5 word) description of the delegated task, for display.`, `简短（3-5 词）的委派任务描述，用中文书写，用于展示。`);
 t(`The task for the subagent. It already sees this conversation's completed turns, so build on them freely and state only what is new.`, `给子 agent 的任务。它已经看到本会话已完成的轮次，所以可以自由基于它们，只说明新的部分。`);
-t(`Delegate a self-contained task to a subagent (a separate agent that works in its own context) to offload focused, independent work — research, a scoped implementation, an analysis — so it does not consume this conversation's context. The subagent returns its result, not its intermediate steps. This tool starts an independently managed subagent and immediately returns its id. The runtime notifies you when it finishes. The child reports results with \`send_message\`; use \`send_message\` to steer it while running or continue its conversation after it finishes.`, `把一个自包含任务委派给 subagent（在自己的上下文中工作的独立 agent），以卸载专注、独立的工作——研究、限定范围的实现、分析——从而不消耗本对话的上下文。subagent 返回其结果，而不是中间步骤。此 tool 启动一个独立管理的 subagent 并立即返回其 id。runtime 在其结束时通知你。子 agent 用 \`send_message\` 上报结果；运行中用 \`send_message\` 引导它，结束后用它继续对话。`);
 t(`The complete, self-contained task for the subagent. It does not share this conversation's context, so include everything it needs.`, `给 subagent 的完整自包含任务。它不共享本对话的上下文，所以包含它所需的一切。`);
 
 // ── schedule ─────────────────────────────────────────────────────────────────
-t(`Create a reminder in the current session that delivers prompt when it becomes due. Supply exactly one timing parameter: after_seconds, at, every_seconds, daily, weekly, or cron. Local times that do not exist in the zone are skipped; repeated local times fire once, at the earlier instant. After downtime, a recurring reminder delivers only its latest missed occurrence. Delivery can repeat after a crash.`, `在当前会话创建一个到期时送达 prompt 的提醒。提供且仅提供一个 timing 参数：after_seconds、at、every_seconds、daily、weekly 或 cron。时区中不存在的本地时间会被跳过；重复出现的本地时间只触发一次，在较早的瞬间。停机之后，重复提醒只送达最近一次错过的发生。崩溃后送达可能重复。`);
-t(`Reminder content to present when the target becomes due.`, `到期时呈现的提醒内容，用中文书写。`);
-t(`Concise task name in the user's language, at most 120 characters. Name only the core action and subject; keep essential target identifiers such as PR numbers and branch names. Do not include execution frequency (e.g. daily, hourly), scheduled dates/times, time zones, task status, or configuration and execution details (e.g. read-only mode, profile-tag filters), even when embedded in the requested or existing title. Do not append parenthetical notes. Put scheduling information in the timing parameters and execution instructions in prompt.`, `以用户语言命名的简洁任务名，至多 120 个字符。只命名核心动作与主题；保留必要的目标标识符，如 PR 编号与 branch 名。不要包含执行频率（如 daily、hourly）、计划日期/时间、时区、任务状态，或配置与执行细节（如只读模式、profile-tag 过滤），即使它们嵌在请求的或已有的 title 里。不要追加括号备注。调度信息放进 timing 参数，执行指令放进 prompt。`);
-t(`Delay in whole seconds.`, `延迟的整秒数。`);
-t(`Fixed-rate interval in whole seconds, at least 60, aligned to the creation time; changing it with schedule_update re-aligns it to the save time.`, `固定间隔的整秒数，至少 60，对齐到创建时刻；用 schedule_update 修改会重新对齐到保存时刻。`);
-t(`Every day at a local time.`, `每天在一个本地时间触发。`);
-t(`HH:mm:ss with optional 1-3 fractional digits, for example 23:00:00.`, `HH:mm:ss，可带 1-3 位小数，例如 23:00:00。`);
-t(`HH:mm:ss with optional 1-3 fractional digits, for example 09:00:00.`, `HH:mm:ss，可带 1-3 位小数，例如 09:00:00。`);
-t(`UTC or IANA Area/Location, for example Asia/Shanghai.`, `UTC 或 IANA Area/Location，例如 Asia/Shanghai。`);
-t(`On the given weekdays at a local time.`, `在给定 weekday 的本地时间触发。`);
-t(`ISO weekdays, Monday 1 through Sunday 7, without repetitions.`, `ISO weekday，周一为 1 到周日为 7，不可重复。`);
-t(`Five-field Vixie cron expression in a time zone.`, `带时区的五字段 Vixie cron 表达式。`);
-t(`minute hour day-of-month month day-of-week, for example "*/15 9-17 * * 1-5". When both day fields are restricted, a date matches if either one matches.`, `minute hour day-of-month month day-of-week，例如 "*/15 9-17 * * 1-5"。当两个 day 字段都被限制时，任一匹配即命中。`);
-t(`Absolute target: an RFC 3339 date-time with offset, or a local date, time, and IANA time_zone.`, `绝对目标：带 offset 的 RFC 3339 date-time，或本地日期、时间与 IANA time_zone。`);
-t(`List the active reminders in the current session.`, `列出当前会话中活动的提醒。`);
-t(`Delete a reminder in the current session, active or inactive. Deletion does not retract a reminder message that is already queued.`, `删除当前会话中的提醒，活动或 inactive 均可。删除不会撤回已排队的提醒消息。`);
-t(`Exact schedule id.`, `确切的 schedule id。`);
-t(`Change a reminder in place, keeping its id. Supply a new title, prompt, or at most one timing parameter; omitted fields keep their stored values. To change a relative delay, create a new reminder.`, `就地修改一个提醒，保持其 id。提供新的 title、prompt，或至多一个 timing 参数；省略的字段保留存储值。要修改相对延迟，请新建提醒。`);
-t(`Schedule id returned by schedule_list.`, `schedule_list 返回的 schedule id。`);
-t(`New task name; follow the schedule_create title rules.`, `新任务名；遵循 schedule_create 的 title 规则。`);
-t(`New reminder content.`, `新的提醒内容，用中文书写。`);
 
+
+// ── dsh 0.2.2-rc.1 对齐：本会话 request/header 实测原文 ─────────────────────
+// ── ask_user_question ──
+t(`Ask the user a concise question when you need confirmation, a choice, or missing information before proceeding. An answer item with empty selected and no custom means the user skipped that question: continue without it, do not ask it again, and do not treat the skip as permission.`, `在继续之前需要确认、选择或缺失信息时，向用户提出简洁的问题。answer 条目中 selected 为空且没有 custom 表示用户跳过了该问题：在没有它的情况下继续，不要再问同一个问题，也不要把跳过当作许可。`);
+// ── list_subagent_models ──
+t(`Inspect subagent models without changing the current Agent. No arguments: providers; \`provider\`: allowed models; \`provider\` + \`model\`: that model and its reasoning efforts. Inspect options here before selecting a child provider and model; use returned ids for delegation.`, `在不改变当前 Agent 的前提下检查 subagent 可用的模型。无参数：providers；\`provider\`：该 provider 允许的 models；\`provider\` + \`model\`：该模型及其 reasoning effort。为子 agent 选择 provider 与 model 之前先在这里查看选项；用返回的 id 进行委派。`);
+t(`Registered LLM provider id.`, `已注册的 LLM provider id。`);
+t(`Exact model id; requires provider.`, `确切的 model id；需要 provider。`);
+// ── present ──
+t(`Declare existing files as final deliverables for the user. Hosts may show presented files only after your turn ends, so call it once the files are final. If the user needs to review files earlier, such as before a tool call that waits for their answer, link them in your message instead. Use it when the user needs a separate file, especially Office documents, spreadsheets, and slide decks; prefer your final response when that suffices. The user opens the current files; their contents are not copied.`, `把现有文件声明为给用户的最终交付物。Host 可能只在你本轮结束后才展示已 present 的文件，因此在文件全部定稿后再调用一次。如果用户需要更早查看文件，比如在某个等待其回答的 tool 调用之前，请在消息里直接给出文件链接。当用户需要独立文件时使用它，尤其是 Office 文档、电子表格与幻灯片；最终回复足够时优先用回复。用户打开的是当前文件；内容不会被复制。`);
+// ── schedule（0.2.2 的 rrule 定时任务）──
+t(`Create a scheduled task. At each occurrence of rrule, prompt is delivered to the target session as a scheduled message from the user. The result includes the task id and the next occurrence as scheduledAt in UTC and scheduledAtLocal in the zone of rrule. After downtime, only the latest missed occurrence is delivered. Delivery can repeat after a crash.`, `创建定时任务。rrule 的每次到期都会把 prompt 作为来自用户的 scheduled message 送达目标 session。结果包含 task id，以及 UTC 时刻的下次到期 scheduledAt 与 rrule 所在时区的 scheduledAtLocal。停机之后只送达其间最近一次错过的到期。崩溃后送达可能重复。`);
+t(`Task name of at most 120 characters in the user's language: action plus object. Omit timing, status, ids, and bracketed suffixes.`, `以用户语言书写的简洁任务名，至多 120 个字符：动作加对象。省略 timing、状态、id 与方括号备注。`);
+t(`Instruction delivered at each occurrence.`, `每次到期时送达的指令，用中文书写。`);
+t(`Supported RFC 5545 subset: one DTSTART line, a newline, and one RRULE line. DTSTART ends in Z for UTC or carries TZID with an IANA time zone; a fixed offset such as UTC+5 is Etc/GMT-5, with the sign reversed. DTSTART must name an existing local time. A TZID rule keeps local clock time across daylight-saving changes; generated nonexistent local times are skipped, and repeated ones occur once, at the earlier instant. DTSTART may be in the past; delivery starts with the first occurrence after creation. A one-time delivery is RRULE:FREQ=DAILY;COUNT=1. No SECONDLY; BYSECOND takes one value. COUNT is at most 1000; use UNTIL for longer rules. MINUTELY and HOURLY accept no BY parts, so select clock times with DAILY or WEEKLY plus BYHOUR and BYMINUTE. BYMONTHDAY and ordinal BYDAY require MONTHLY or YEARLY; BYYEARDAY and BYWEEKNO require YEARLY. Ordinal BYDAY cannot combine with BYWEEKNO. Each FREQ period allows at most 10080 candidates before BYSETPOS, which accepts at most 31 values. UNTIL is a UTC instant ending in Z. Example: "DTSTART;TZID=Asia/Singapore:20260901T080000\\nRRULE:FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1"`, `支持的 RFC 5545 子集：一行 DTSTART、一个换行、一行 RRULE。DTSTART 以 Z 结尾表示 UTC，或带 TZID 指定 IANA 时区；固定偏移如 UTC+5 要写作 Etc/GMT-5（符号相反）。DTSTART 必须是真实存在的本地时间。带 TZID 的规则在夏令时切换时保持本地钟点；生成的不存在的本地时间会被跳过，重复出现的本地时间只送达一次，取较早的瞬间。DTSTART 可以位于过去；送达从创建之后的第一次到期开始。单次送达写作 RRULE:FREQ=DAILY;COUNT=1。不支持 SECONDLY；BYSECOND 只接受一个值。COUNT 至多 1000；更长的规则用 UNTIL。MINUTELY 与 HOURLY 不接受任何 BY 部分，因此用 DAILY 或 WEEKLY 加 BYHOUR 与 BYMINUTE 来选定钟点。BYMONTHDAY 与带序号的 BYDAY 需要 MONTHLY 或 YEARLY；BYYEARDAY 与 BYWEEKNO 需要 YEARLY。带序号的 BYDAY 不能与 BYWEEKNO 组合。BYSETPOS 之前每个 FREQ 周期至多允许 10080 个候选，BYSETPOS 至多接受 31 个值。UNTIL 是以 Z 结尾的 UTC 瞬间。示例："DTSTART;TZID=Asia/Singapore:20260901T080000\\nRRULE:FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1"`);
+t(`this_session delivers to this session; new_once delivers to the same new session every time, opened at the first delivery; new opens a different new session for every delivery. New sessions use this session's working directory and preset. With this_session or new_once, a delivery waits until the previous one finishes, and only the latest occurrence that passed meanwhile is delivered. Use this_session for reminders and for follow-ups to this conversation; use new_once or new for independent work, such as a recurring report, and whenever the user asks for a new conversation.`, `this_session 送达本 session；new_once 每次送达同一个新 session，在首次送达时打开；new 每次送达都打开一个不同的新 session。新 session 使用本 session 的工作目录与 preset。用 this_session 或 new_once 时，一次送达会等上一次完成，其间越过的到期只送达最近一次。提醒以及对本对话的后续跟进用 this_session；独立工作（例如周期性报告），以及用户要求新对话时，用 new_once 或 new。`);
+t(`Update, pause, resume, or delete one scheduled task by id. Deleting does not retract queued messages.`, `按 id 更新、暂停、恢复或删除一个定时任务。删除不会撤回已排队的消息。`);
+t(`Task id.`, `任务 id。`);
+t(`update applies the provided fields, at least one; delete removes the task.`, `update 应用所提供的字段，至少一个；delete 删除该任务。`);
+t(`New instruction delivered at each occurrence.`, `新的、每次到期时送达的指令，用中文书写。`);
+t(`New recurrence in the schedule_create rrule format.`, `按 schedule_create 的 rrule 格式提供新的重复规则。`);
+t(`Omit to retain the destination and its creation settings. Providing target replaces them; new_once reserves a different Session. New targets capture this Session's working directory and preset. Choices are the same as schedule_create.`, `省略则保留原目标及其创建设置。提供 target 会替换它们；new_once 预留一个不同的 Session。新目标捕获本 Session 的工作目录与 preset。可选值与 schedule_create 相同。`);
+t(`false pauses the task; true resumes only if its timing has a future occurrence. Otherwise provide a new rrule.`, `false 暂停任务；true 仅当其 timing 存在未来到期时才恢复。否则请提供新的 rrule。`);
+t(`updatedAt from the latest result that returned this task; if the task changed after that result, the result is schedule_conflict and nothing changes.`, `取自最近一次返回该任务的结果的 updatedAt；若该结果之后任务又发生变化，结果为 schedule_conflict，且不做任何改动。`);
+t(`List scheduled tasks, including tasks created from other sessions. Active tasks come first, ordered by scheduledAt.`, `列出定时任务，包括由其他 session 创建的任务。活动任务排在最前，按 scheduledAt 排序。`);
+t(`true for active tasks only; false for paused and ended tasks only; omitted for all tasks.`, `true 只列活动任务；false 只列已暂停与已结束的任务；省略则列全部任务。`);
+t(`Page size from 1 to 500; defaults to 100.`, `页大小，1 到 500；默认 100。`);
+t(`Number of tasks to skip; defaults to 0.`, `跳过的任务数；默认 0。`);
+t(`View one scheduled task by id.`, `按 id 查看一个定时任务。`);
+// ── subagent / subagent_fork ──
+t(`Delegate a self-contained task to a subagent (a separate agent that works in its own context) to offload focused, independent work — research, a scoped implementation, an analysis — so it does not consume this conversation's context. The subagent returns its result, not its intermediate steps. This tool starts an independently managed subagent and immediately returns its id. The runtime notifies you when it finishes. The child reports results with \`send_message\`; use \`send_message\` to steer it while running or continue its conversation after it finishes. Supply \`provider\` and \`model\` together. Omitted values use child defaults, falling back to compatible parent values. When the effective route changes, an omitted \`reasoning_effort\` uses the model's default.`, `把一个自包含任务委派给 subagent（一个在自己上下文中工作的独立 agent），以卸载专注、独立的工作——研究、限定范围的实现、分析——从而不消耗本对话的上下文。subagent 返回其结果，而不是中间步骤。此 tool 启动一个独立管理的 subagent 并立即返回其 id。runtime 会在其结束时通知你。子 agent 用 \`send_message\` 上报结果；运行中用 \`send_message\` 引导它，结束后用它继续其对话。\`provider\` 与 \`model\` 需一起提供。省略时使用子 agent 的默认值，回退到与父级兼容的值。当实际路由发生变化时，省略的 \`reasoning_effort\` 使用该模型的默认值。`);
+t(`Child LLM provider id.`, `子 agent 的 LLM provider id。`);
+t(`Model id within that provider.`, `该 provider 内的 model id。`);
+t(`Model-specific reasoning effort id.`, `该模型专属的 reasoning effort id。`);
+// ── ralph ──
+t(`Run a foreground fresh-agent Ralph loop toward one immutable objective. Use only when the direct human explicitly asks for Ralph or fresh-agent iteration. Each round opens a new child with no parent conversation or prior child session; the shared workspace is long-term memory, and only a bounded structured report crosses rounds. The call returns when a worker reports completion or a concrete blocker, or at the round limit. Ordinary long-running same-session work belongs to goal tools.`, `运行一个前台 fresh-agent Ralph 循环，朝向一个不可变 objective。仅当直接的人类明确要求 Ralph 或 fresh-agent 迭代时使用。每一轮都新开一个没有父对话、也没有此前 child session 的 child；共享 workspace 就是长期记忆，只有有界的结构化报告跨轮传递。调用在某个 worker 报告完成或遇到具体 blocker 时返回，或在轮数上限处返回。普通的同会话长任务属于 goal 工具。`);
+t(`The immutable completion objective for every fresh Ralph round.`, `每个 fresh Ralph 轮共享的不可变完成 objective。`);
+t(`Optional positive safe-integer round cap, bounded by the deployment ceiling.`, `可选的正安全整数轮数上限，受部署上限约束。`);
 /** 递归翻译 schema 节点及其嵌套 description。 */
 function walk(node) {
 	if (node === null || typeof node !== "object") return;

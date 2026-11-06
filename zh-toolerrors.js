@@ -21,6 +21,8 @@ const rules = [
 			if (missing !== null) return `缺少必需属性 "${missing[1]}"`;
 			const array = /^"(.*?)" must be an array$/.exec(clause);
 			if (array !== null) return `"${array[1]}" 必须是数组`;
+			const undeclared = /^"(.*?)" is not a declared property \(additionalProperties: false\)$/.exec(clause);
+			if (undeclared !== null) return `"${undeclared[1]}" 不是声明的属性（additionalProperties: false）`;
 			return undefined;
 		});
 		return zh.every((t) => t !== undefined) ? `错误：参数无效：${zh.join("；")}` : undefined;

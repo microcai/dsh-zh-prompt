@@ -44,6 +44,18 @@ const LINE_MAP = new Map([
 		"A user may still invoke a skill directly; its <skill_content> block then appears in this conversation. Follow it, and do not call the `skill` tool for it.",
 		"用户仍可直接调用某个 skill；其 <skill_content> 块随后会出现在本对话中。遵循该块，并且不要为其调用 `skill` 工具。",
 	],
+	[
+		"No skills could be confirmed in this discovery attempt.",
+		"本次 discovery 尝试未能确认任何 skill。",
+	],
+	[
+		"Wait for an updated catalog before calling the `skill` tool. Do not infer skill instructions from an empty catalog.",
+		"等目录更新后再调用 `skill` 工具。不要从空目录推断 skill 指令。",
+	],
+	[
+		"No skills could be confirmed in this discovery attempt. Do not use names from earlier skill catalogs.",
+		"本次 discovery 尝试未能确认任何 skill。不要使用此前 skill 目录中的名称。",
+	],
 ]);
 
 /** 条目描述映射：skill 名 → { en: 目录中逐字的英文渲染, zh: 中文译文 }。 */

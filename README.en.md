@@ -43,10 +43,10 @@ Pick either method below; the package has no dependencies. After installing, tog
 Type this repository's address directly into the "Add plugin" input field in the DSH plugin UI:
 
 ```
-https://github.com/microcai/dsh-zh-prompt#v0.6.4
+https://github.com/microcai/dsh-zh-prompt#v0.6.5
 ```
 
-`#v0.6.4` pins the installation to that tag; without `#...` the latest commit of the default branch is installed. DSH first checks repository connectivity anonymously, then clones and installs — no npm publishing required. Prerequisites and caveats:
+`#v0.6.5` pins the installation to that tag; without `#...` the latest commit of the default branch is installed. DSH first checks repository connectivity anonymously, then clones and installs — no npm publishing required. Prerequisites and caveats:
 
 - The repository must be public — the pre-install connectivity check carries no credentials, so private repos fail with "cannot reach GitHub".
 - The other machine's network must be able to reach GitHub. Direct connections from mainland China often time out; in that case configure a git proxy first, or use Method 2 with a tgz instead. The registry mirror in the dialog only affects npm package-name lookups and does nothing for GitHub addresses.
@@ -55,7 +55,7 @@ https://github.com/microcai/dsh-zh-prompt#v0.6.4
 
 ### Method 2: tgz file
 
-Just send them `local-dsh-zh-prompt-<version>.tgz` (the `npm pack` artifact). They need neither the source tree nor access to GitHub. In their own DSH they tell the agent: "install `file:/absolute/path/local-dsh-zh-prompt-0.6.4.tgz`", and let it use the plugin manager's `install_bundle` (pass that `file:` spec as the target). Suitable when their network cannot reach GitHub or you do not want to publish the repository.
+Just send them `local-dsh-zh-prompt-<version>.tgz` (the `npm pack` artifact). They need neither the source tree nor access to GitHub. In their own DSH they tell the agent: "install `file:/absolute/path/local-dsh-zh-prompt-0.6.5.tgz`", and let it use the plugin manager's `install_bundle` (pass that `file:` spec as the target). Suitable when their network cannot reach GitHub or you do not want to publish the repository.
 
 ## Development (local machine)
 

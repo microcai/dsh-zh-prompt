@@ -9,6 +9,7 @@
 /** 静态 context 文本的精确翻译。 */
 const exact = new Map([
 	["Approval policy: ask. Operations that require approval may ask through the configured answerers; without an available answerer, the request fails closed.", `审批策略：ask。需要审批的操作会通过已配置的 answerer 询问用户；没有可用的 answerer 时请求 fail closed。`],
+	["Approval prompts are enabled in this session: operations that require approval may ask through the configured answerers; without an available answerer, the request fails closed.", `审批提示在本会话已启用：需要审批的操作会通过已配置的 answerer 询问用户；没有可用的 answerer 时请求 fail closed。`],
 	["Approval prompts are disabled in this session: actions that require approval are rejected automatically — do not request sandbox escalation (do not set `sandbox_permissions`).", `本会话禁用了审批提示：需要审批的操作会被自动拒绝——不要请求 sandbox 提权（不要设置 \`sandbox_permissions\`）。`],
 	["Current DSH file policy: read-only. Any available operation enforced by the DSH file sandbox cannot modify files in the standing mode. Do not refuse a required modification from this policy alone: try an available tool normally and follow any denial and escalation guidance it returns.", `当前 DSH 文件策略：read-only。受 DSH file sandbox 约束的可用操作在此常驻模式下不能修改文件。不要仅凭本策略就拒绝必需的修改：正常尝试可用工具，并遵循其返回的拒绝与提权指引。`],
 	["Current DSH file policy: danger-full-access. The DSH file sandbox does not restrict file modifications by available operations.", `当前 DSH 文件策略：danger-full-access。DSH file sandbox 不限制可用操作的文件修改。`],

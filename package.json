@@ -1,6 +1,6 @@
 {
   "name": "@local/dsh-zh-prompt",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "private": true,
   "description": "Chinese system prompt overlay: rewrites assembled prompt sections, tool schema descriptions, runtime context, time-context messages, and compaction summarization instructions into Chinese.",
   "type": "module",
