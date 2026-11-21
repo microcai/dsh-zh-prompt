@@ -44,6 +44,7 @@ When ready, call exit_plan_mode with the complete plan markdown, starting with a
 // ── 工具使用 guidance ────────────────────────────────────────────────────────
 t(`Check the [exit code: N] marker on every bash result; investigate failures before moving on.`, `检查每条 bash 结果的 [exit code: N] 标记；先排查失败再继续。`);
 t(`Use the read tool — not shell commands like cat — to inspect text files. Use offset and limit to continue reading large files.`, `用 read 工具——而不是 cat 之类的 shell 命令——查看文本文件。用 offset 与 limit 继续读取大文件。`);
+t(`Use the read tool — not shell commands like cat, sed, head, or tail — to inspect text files. Use offset and limit to read a line range or continue a large file.`, `用 read 工具——而不是 cat、sed、head、tail 之类的 shell 命令——查看文本文件。用 offset 与 limit 读取行范围或继续读取大文件。`);
 t(`Read an existing file before overwriting it with write and prefer edit for targeted changes.`, `用 write 覆盖已有文件之前先读它，定向修改优先用 edit。`);
 t(`Read an existing file before overwriting it with write.`, `用 write 覆盖已有文件之前先读它。`);
 t(`Read a file before editing it unless you just created or edited it in this session.`, `编辑文件之前先读它，除非你刚在本次会话中创建或编辑过它。`);
@@ -76,6 +77,7 @@ t(`When you have your final answer, you MUST report it by calling the \`structur
 /** 动态 section 的正则规则：返回译文或 undefined。 */
 const rules = [
 	[/^Use the (\w+) tool ONLY when the user explicitly asks for a workflow or for large multi-agent orchestration: you write a JavaScript script \(the tool description documents the exact format\) that fans work out across many subagents with phases and structured results\. For one or two delegations, prefer plain subagent calls\.$/, (m) => `只在用户明确要求 workflow 或大规模多 agent 编排时才使用 ${m[1]} 工具：你编写一个 JavaScript 脚本（tool description 记录了确切格式），把工作扇出到许多 subagent，带 phase 与结构化结果。一两个委托时优先用普通 subagent 调用。`],
+	[/^Start independent delegations with (.+?) together in one assistant message and continue useful work while they run\. When only waiting for their results remains, end your turn instead of sleeping or polling; the next result starts a new turn\. Collect the subagent results required to complete the task before giving the user a final answer\.\n\nBash, formatters, code generators, and scripts can overwrite concurrent edits without conflict detection; coordinate their changes explicitly\. The agent integrating the work must review the final diff and run relevant tests\.$/, (m) => `在同一条 assistant 消息里一起发起独立的委托（${m[1]}），它们运行时继续做有用的工作。只剩下等待它们的结果时，结束本轮而不是睡眠或轮询；下一个结果会开启新一轮。给出最终回答前，收集完成 task 所需的 subagent 结果。\n\nBash、formatter、代码生成器与脚本会在无冲突检测的情况下覆盖并发修改；需显式协调它们的改动。整合这份工作的 agent 必须审阅最终 diff 并运行相关测试。`],
 	[/^Start independent delegations with (.+?) together in one assistant message and continue useful work while they run\.( When only waiting for their results remains, end your turn instead of sleeping or polling; the next result starts a new turn\.)?$/, (m) => `在同一条 assistant 消息里一起发起独立的委托（${m[1]}），它们运行时继续做有用的工作。${m[2] !== undefined ? "只剩下等待它们的结果时，结束本轮而不是睡眠或轮询；下一个结果会开启新一轮。" : ""}`],
 	[/^You are a coding agent powered by the (\S+) model\.$/, (m) => `你是一个由 ${m[1]} 模型驱动的 coding agent。`],
 	[/^create_goal may infer goal intent from a direct human request in any language\./, (m, text) => {

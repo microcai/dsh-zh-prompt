@@ -82,10 +82,45 @@ const SKILL_DESC = new Map([
 		},
 	],
 	[
+		"dsh-doc",
+		{
+			en: "Use when a task needs facts about DeepSeek Harness (DSH) itself, such as how a feature, setting, plugin, agent preset, tool, or Cordis API of the running installation works; when the user asks to design, review, build, install, enable, or debug a DSH plugin, bundle, MCP connection, agent preset, plugin icon or detail page, or a DSH tool definition or skill; and when upgrading a plugin or profile to a newer DSH release. Loading it grants no permission to change files or the profile.",
+			zh: "当 task 需要关于 DeepSeek Harness (DSH) 本身的事实（如运行中的安装里某个 feature、setting、plugin、agent preset、tool 或 Cordis API 如何工作）时使用；当用户要求设计、review、构建、安装、启用或调试 DSH plugin、bundle、MCP connection、agent preset、plugin 图标或详情页，或某个 DSH tool 定义或 skill 时使用；也在把 plugin 或 profile 升级到更新的 DSH release 时使用。加载它不授予修改文件或 profile 的权限。",
+		},
+	],
+	[
 		"editing-cordis-compositions",
 		{
 			en: "Use when creating, changing, or validating an agent preset or other Cordis composition for this harness, including deciding host versus preset placement and checking that an authored preset mounts.",
 			zh: "在为当前 harness 创建、修改或校验 agent preset 及其他 Cordis composition 时使用，包括决定 host 与 preset 的放置位置，以及检查所编写的 preset 能否成功挂载。",
+		},
+	],
+	[
+		"office",
+		{
+			en: "Create or edit Office files; inspect Office files and PDFs. Load before rendering, conversion, or recalculation to enable office_render, office_convert, and office_recalculate next step.",
+			zh: "创建或编辑 Office 文件；检视 Office 文件与 PDF。在渲染、转换或重算之前先加载它，以便下一步启用 office_render、office_convert 与 office_recalculate。",
+		},
+	],
+	[
+		"office-docx",
+		{
+			en: "Create, read, edit, and validate Word documents (.docx).",
+			zh: "创建、读取、编辑并校验 Word 文档（.docx）。",
+		},
+	],
+	[
+		"office-pptx",
+		{
+			en: "Create, read, edit, and validate PowerPoint presentations (.pptx).",
+			zh: "创建、读取、编辑并校验 PowerPoint 演示文稿（.pptx）。",
+		},
+	],
+	[
+		"office-xlsx",
+		{
+			en: "Read, create, edit, and validate Excel workbooks, data, and formulas (.xlsx).",
+			zh: "读取、创建、编辑并校验 Excel 工作簿、数据与公式（.xlsx）。",
 		},
 	],
 ]);
